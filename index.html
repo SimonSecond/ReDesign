@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表单页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .form-container {
+            background: #fff;
+            padding: 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 800px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        input,
+        button {
+            width: 95%;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #instruction {
+            margin-top: 20px;
+            width: 100%;
+            height: 800px;
+            display: none;
+            /* 隐藏 iframe，直到表单提交后显示 */
+        }
+
+        #result {
+            margin-top: 20px;
+            width: 100%;
+            height: 800px;
+            display: none;
+        }
+
+        #end {
+            margin-top: 20px;
+            width: 100%;
+            height: 800px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container" id="form-container">
+        <h1>填写基本信息</h1>
+        <form id="basic-info-form">
+            <div class="form-group">
+                <label for="name">姓名</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="id">ID</label>
+                <input type="text" id="id" name="id" required>
+            </div>
+            <div class="form-group">
+                <label for="session">Session</label>
+                <input type="number" id="session" name="session" required>
+            </div>
+            <button type="submit" id="fullscreen-button">下一页</button>
+        </form>
+    </div>
+
+
+    <!-- iframe 用于加载说明页面 -->
+    <div id="instruction" class="instruction_group">
+        <iframe id="instructionframe" src="instruction.html" style="width: 100%; height: 800px;" scrolling="no"
+            frameborder="0" name="iframe_a"></iframe>
+    </div>
+
+    <!-- iframe 用于加载结果页面 -->
+    <div id="result" class="result_group">
+        <iframe id="resultframe" src="result.html" style="width: 100%; height: 1000px;" scrolling="no" frameborder="0"
+            name="iframe_a"></iframe>
+    </div>
+
+    <!-- iframe 用于加载结束页面 -->
+    <div id="end" class="end_group">
+        <iframe id="endframe" src="end.html" style="width: 100%; height: 800px;" scrolling="no" frameborder="0"
+            name="iframe_a"></iframe>
+    </div>
+
+    <script>
+        // 提交表单时处理逻辑
+        document.getElementById('basic-info-form').onsubmit = function (event) {
+            event.preventDefault();  // 阻止表单默认提交行为
+
+            // 获取用户填写的信息
+            var name = document.getElementById('name').value;
+            var id = document.getElementById('id').value;
+            var session = document.getElementById('session').value;
+            console.log(name,id,session);
+
+            // 将用户信息保存在本地存储中
+            localStorage.setItem('name', name);
+            localStorage.setItem('id', id);
+            localStorage.setItem('session', session);
+
+            // 隐藏表单并显示 iframe
+            document.getElementById('form-container').style.display = 'none';  // 隐藏表单
+            document.getElementById('instruction').style.display = 'block';  // 显示调查页面 iframe
+
+            // 加载 survey 页面到 iframe
+            document.getElementById('instructionframe').src = 'instruction.html';
+
+            // 进入全屏
+            var fullscreen = document.documentElement;
+            if (fullscreen.requestFullscreen) {
+                fullscreen.requestFullscreen();
+            } else if (fullscreen.mozRequestFullScreen) { // Firefox
+                fullscreen.mozRequestFullScreen();
+            } else if (fullscreen.webkitRequestFullscreen) { // Chrome, Safari, and Opera
+                fullscreen.webkitRequestFullscreen();
+            } else if (fullscreen.msRequestFullscreen) { // Internet Explorer
+                fullscreen.msRequestFullscreen();
+            }
+        };
+
+        // 监听子页面的提交完成信号并跳转到结束页面
+        window.addEventListener('message', function (event) {
+            console.log(event.data);
+            if (event.data === 'resultSubmitted') {
+                document.getElementById('instruction').style.display = 'none';
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('resultframe').src = 'result.html';
+                resultframe.contentWindow.postMessage("allowScript", "*");
+            }
+
+            if (event.data === 'endSubmitted') {
+                // 隐藏问卷页面，显示结束页面
+                document.getElementById('result').style.display = 'none';
+                document.getElementById('end').style.display = 'block';
+                document.getElementById('endframe').src = 'end.html';
+            }
+        });
+    </script>
+</body>
+
+</html>

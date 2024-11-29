@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务说明</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background: #fff;
+            padding: 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        p {
+            font-size: 20px;
+            color: #666;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 15px 25px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>任务说明</h1>
+        <p>
+        <ul style="text-align: left; margin-left: 40px;">
+            <li>下面将呈现一个物品，请按要求改进该物品。</li>
+            <li>请在物品下方的输入框中，写下您的想法。</li>
+            <li>您的想法越新奇越好，越多越好。</li>
+            <li>任务时间为 5 分钟，请在时间结束前提交您的回答。</li>
+        </ul>
+        </p>
+        <button type="button" id="submit-button">继续</button>
+    </div>
+
+    <script>
+
+        // 继续按钮点击后跳转到结果页面
+        function RedirectToResult() {
+            if (window.parent) {
+                window.parent.postMessage('resultSubmitted', '*');
+                console.log("已发送");
+            }
+        }
+
+        document.getElementById('submit-button').onclick = function () {
+            RedirectToResult();
+        }
+    </script>
+</body>
+
+</html>
